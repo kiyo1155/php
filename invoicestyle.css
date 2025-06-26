@@ -7,71 +7,93 @@ fieldset{
 }
 
 .bill{
-    width: 800px;
-    height: 900px;
+    width: 1000px;
+    height: 800px;
     margin: auto;
     margin-top: 50px;
     border: 2px solid black;
     padding: 10px;
 }
 
-.header {
+/* 1段落（ヘッダー） */
+.bill .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  padding-bottom: 20px;
   margin-bottom: 40px;
+  border-bottom: 2px solid #007acc;
 }
 
-.logo{
-    width: 80;
-    height: 80px;
+.bill .header .logo {
+  width: 80px;
+  height: auto;
+  margin-right: 20px;
 }
 
-.invoice-title {
+.bill .invoice-title {
   font-size: 28px;
   font-weight: bold;
-  text-align: right;
+  color: #007acc;
 }
 
+/* 2段落（差出人・宛先） */
 .info-container {
-  display: flex;
-  justify-content: space-between;
   margin-bottom: 40px;
   font-size: 14px;
-}
-
-.info-column {
-  width: 30%;
   line-height: 1.6;
+  border-bottom: 2px solid #007acc;
+  padding-bottom: 20px;
 }
 
+/* info-columnは縦積みに */
+.info-column {
+  background: #f9f9f9;
+  padding: 15px 20px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px; /* 各差出人・宛先の間にスペース */
+}
+
+/* 3段落（明細テーブル） */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  font-size: 14px;
+  border: 1px solid #ccc;
 }
 
-table thead {
-  background-color: #f2f2f2;
-}
-
-table th, table td {
+table thead th {
+  background-color: #007acc;
+  color: white;
   padding: 12px;
   border: 1px solid #ccc;
   text-align: left;
-  font-size: 14px;
 }
 
-table td:nth-child(4), table th:nth-child(4) {
-  text-align: right;
+table tbody td {
+  padding: 12px;
+  border: 1px solid #ccc;
 }
 
-.total td {
+table tfoot tr.total td {
   font-weight: bold;
-  background-color: #f9f9f9;
+  background-color: #f0f8ff;
+  border-top: 2px solid #007acc;
+  text-align: right;
+  padding: 14px 12px;
 }
 
-p {
-  font-size: 14px;
-  line-height: 1.8;
+table tfoot tr.total td:first-child {
+  text-align: left;
+}
+
+/* 4段落（支払条件） */
+.bill > p {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+  border-top: 2px solid #007acc;
+  padding-top: 20px;
+  margin-top: 0;
 }

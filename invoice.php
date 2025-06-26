@@ -1,20 +1,3 @@
-<?php
-$str = '';
-
-$file = fopen('data/meisai.csv','r');
-flock($file, LOCK_EX);
-
-if($file){
-  while($line = fgets($file)){
-    $str .= "<tr><td>{$line}</tr></td>";
-  }
-}
-
-flock($file, LOCK_UN);
-fclose($file);
-
-?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -33,9 +16,16 @@ fclose($file);
         顧客名: <input type="text" name="customer" id="customer"readonly>
       </div>
       <div class="content">
-        期間: <input type="date" name="date">～<input type="date" name="date">
+        期間: <input type="date" name="date" id="start">～<input type="date" name="date"id="end">
       </div>
+      <div class="content">
+        <button type="button" id="loadData">明細読み込み</button>
+       </div>
+       <div class="content">
+       </div>
   </fieldset>
+  <a href="index.php">明細記入へ戻る</a>
+
   <div class="bill">
     <div class="header">
         <img src="logo.png" class="logo">
@@ -44,68 +34,35 @@ fclose($file);
     <div class="info-container">
         <div class="info-column">
             <strong>差出人:</strong><br>
-            株式会社サンプル制作<br>
-            〒123-4567<br>
-            東京都渋谷区サンプル町1-2-3<br>
-            メール: info@example.com<br>
-            電話: 03-1234-5678
+            株式会社タグスル<br>
+            〒779-0000<br>
+            徳島県鳴門市○○<br>
+            メール: info@tagusuru.com<br>
+            電話: 080-xxx-xxxx
         </div>
         <div class="info-column">
-            <strong>宛先:</strong><br>
-            株式会社サンプルクライアント<br>
-            〒765-4321<br>
-            東京都渋谷区サンプル町3-2-1<br>
-            メール: billing@example.com
-        </div>
-        <div class="info-column">
-            <strong>請求書番号:</strong> INV-2024-001<br>
-            <strong>発行日:</strong> 20XX年12月31日<br>
-            <strong>支払期限:</strong> 20XX年1月31日
-        </div>
-    </div>
+                <strong>宛先:</strong><br>
+    <div id="billcustomer"></div><br>
+  </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>品目</th>
-                <th>数量</th>
-                <th>単価</th>
-                <th>金額</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>ロゴデザイン制作</td>
-                <td>1</td>
-                <td>¥50,000</td>
-                <td>¥50,000</td>
-            </tr>
-            <tr>
-                <td>ウェブサイトモックアップ</td>
-                <td>3</td>
-                <td>¥30,000</td>
-                <td>¥90,000</td>
-            </tr>
-            <tr>
-                <td>SNSグラフィックパッケージ</td>
-                <td>1</td>
-                <td>¥25,000</td>
-                <td>¥25,000</td>
-            </tr>
-            <tr>
-                <td>修正および打ち合わせ</td>
-                <td>5時間</td>
-                <td>¥7,500/時間</td>
-                <td>¥37,500</td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr class="total">
-                <td colspan="3">合計金額（税込）</td>
-                <td>¥202,500</td>
-            </tr>
-        </tfoot>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>品目</th>
+        <th>金額</th>
+        <th>備考</th>
+      </tr>
+    </thead>
+    <tbody id="invoice-body">
+      <!-- JavaScriptで明細を追加 -->
+    </tbody>
+    <tfoot>
+      <tr class="total">
+        <td colspan="1">合計金額（税込）</td>
+        <td id="total-amount">¥0</td>
+      </tr>
+    </tfoot>
+  </table>
     <p>
         <strong>支払条件:</strong> 請求書発行日より14日以内<br>
         <strong>支払方法:</strong> 銀行振込
@@ -122,11 +79,59 @@ fclose($file);
 
   const numberInput = document.getElementById("number");
   const customerInput = document.getElementById("customer");
+  const customerbill = document.getElementById("billcustomer");
 
   numberInput.addEventListener("input", () => {
     const number = numberInput.value.trim();
-    customerInput.value = customerMap[number] || ""; // 該当がなければ空にする
+    const name = customerMap[number] || ""; 
+    customerInput.value = name;
+    customerbill.textContent = name;
   });
+
+  document.getElementById('loadData').addEventListener('click', async () => {
+  const number = document.getElementById('number').value.trim();
+  const start = document.getElementById('start').value;
+  const end = document.getElementById('end').value;
+
+  if (!number || !start || !end) {
+    alert("顧客番号と期間を入力してください");
+    return;
+  }
+
+  const res = await fetch(`filter_meisai.php?number=${number}&start=${start}&end=${end}`);
+  const data = await res.json();
+
+  const tbody = document.getElementById('invoice-body');
+  const billCustomer = document.getElementById('billcustomer');
+  const customerInput = document.getElementById('customer');
+  const totalAmount = document.getElementById('total-amount');
+
+  tbody.innerHTML = '';
+  let total = 0;
+
+  if (data.length > 0) {
+    billCustomer.textContent = data[0].company;
+    customerInput.value = data[0].company;
+
+    data.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${row.item}</td>
+        <td>¥${Number(row.amount).toLocaleString()}</td>
+        <td>${row.note}</td>
+      `;
+      tbody.appendChild(tr);
+      total += Number(row.amount);
+    });
+  } else {
+    billCustomer.textContent = '';
+    customerInput.value = '';
+  }
+
+  totalAmount.textContent = `¥${total.toLocaleString()}`;
+});
+
+
 </script>
     
 </body>
