@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -22,6 +24,7 @@
         <button type="button" id="loadData">明細読み込み</button>
        </div>
        <div class="content">
+        <button id="pdf">発行</button>
        </div>
   </fieldset>
   <a href="index.php">明細記入へ戻る</a>
@@ -131,8 +134,20 @@
   totalAmount.textContent = `¥${total.toLocaleString()}`;
 });
 
+document.getElementById("pdf").addEventListener("click", () => {
+  const element = document.querySelector(".bill");
+  const opt = {
+    margin:       10,
+    filename:     'invoice.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(element).save();
+});
+
 
 </script>
-    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>
