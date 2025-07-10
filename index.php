@@ -29,10 +29,11 @@
         詳細: <input type="text" name="detail">
       </div>
       <div class="content">
-        <button>明細保存</button>
+        <button type="submit">明細保存</button>
       </div>
     </fieldset>
-    <a href="invoice.php">請求書発行にすすむ</a>
+    <a href="invoice.php">請求書発行にすすむ</a><br>
+    <a href="read.php">明細編集</a>
 
     <script>
   // 顧客番号と顧客名の対応表（サンプル）

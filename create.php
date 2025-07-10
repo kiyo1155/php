@@ -50,7 +50,7 @@ if ($status == false) {
     exit('SQLエラー:' . print_r($error, true));
 } else {
     // 登録後に遷移
-    header('Location: invoice.php');
+    header('Location: index.php');
     exit();
 }
 ?>
