@@ -4,9 +4,7 @@ if (
   !isset($_POST['number']) || $_POST['number'] === '' ||
   !isset($_POST['date']) || $_POST['date'] === '' ||
   !isset($_POST['merchandise']) || $_POST['merchandise'] === '' ||
-  !isset($_POST['amount']) || $_POST['amount'] === '' ||
-  !isset($_POST['detail']) || $_POST['detail'] === '' ||
-  !isset($_POST['id']) || $_POST['id'] === ''
+  !isset($_POST['amount']) || $_POST['amount'] === ''
 ) {
   exit('paramError');
 }
